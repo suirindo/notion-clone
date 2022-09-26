@@ -6,6 +6,8 @@ const User = require('./src/v1/models/user');
 const app = express();
 const PORT = 5000;
 require('dotenv').config();
+// jsonオブジェクトを認識できるようにするための準備
+app.use(express.json());
 
 // DB接続
 try {
