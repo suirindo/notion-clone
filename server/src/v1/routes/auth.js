@@ -44,4 +44,10 @@ router.post(
   userController.login
 );
 
+// JWT認証API
+// JWT認証の手前にミドルウェアを設定して、これが正常に通ったら200が通るようにする
+router.post('/verfiy-token', (req, res) => {
+  return res.status(200).json({ user: req.user });
+});
+
 module.exports = router;
