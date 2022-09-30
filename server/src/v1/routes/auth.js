@@ -47,7 +47,7 @@ router.post(
 
 // JWT認証API
 // JWT認証の手前にミドルウェアを設定して、これが正常に通ったら200が通るようにする
-router.post('/verfiy-token', tokenHandler.verifyToken, (req, res) => {
+router.post('/verify-token', tokenHandler.verifyToken, (req, res) => {
   return res.status(200).json({ user: req.user });
 });
 
