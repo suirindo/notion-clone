@@ -30,10 +30,12 @@ exports.login = async (req, res) => {
     const user = await User.findOne({ username: username });
     if (!user) {
       return res.status(401).json({
-        errors: {
-          param: 'username',
-          message: 'ユーザー名が無効です',
-        },
+        errors: [
+          {
+            param: 'username',
+            message: 'ユーザー名が無効です',
+          },
+        ],
       });
     }
     // パスワードが正しいか照合する
@@ -46,7 +48,7 @@ exports.login = async (req, res) => {
       return res.status(401).json({
         errors: {
           param: 'password',
-          message: 'パスワードが無効です',
+          msg: 'パスワードが無効です',
         },
       });
     }

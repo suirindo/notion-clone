@@ -1,13 +1,15 @@
 import { Box, Button, TextField } from '@mui/material';
 import React, { useState } from 'react';
 import { LoadingButton } from '@mui/lab';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import authApi from '../api/authApi';
 
 const Register = () => {
+  const navigate = useNavigate();
   const [usernameErrtext, setUsernameErrText] = useState('');
   const [passwordErrtext, setPasswordErrText] = useState('');
   const [confirmErrtext, setConfirmErrText] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,6 +47,8 @@ const Register = () => {
 
     if (error) return;
 
+    setLoading(true);
+
     // 新規登録APIを叩く。try catch文が基本
     try {
       const res = await authApi.register({
@@ -52,8 +56,10 @@ const Register = () => {
         password,
         confirmPassword,
       });
+      setLoading(false);
       localStorage.setItem('token', res.token);
       console.log('新規登録に成功しました');
+      navigate('/');
     } catch (err) {
       console.log(err);
       const errors = err.data.errors;
@@ -69,6 +75,7 @@ const Register = () => {
           setConfirmErrText(err.msg);
         }
       });
+      setLoading(false);
     }
   };
   return (
@@ -83,6 +90,7 @@ const Register = () => {
           required
           helperText={usernameErrtext}
           error={usernameErrtext !== ''}
+          disabled={loading}
         />
         <TextField
           fullWidth
@@ -94,6 +102,7 @@ const Register = () => {
           required
           helperText={passwordErrtext}
           error={passwordErrtext !== ''}
+          disabled={loading}
         />
         <TextField
           fullWidth
@@ -105,12 +114,13 @@ const Register = () => {
           required
           helperText={confirmErrtext}
           error={confirmErrtext !== ''}
+          disabled={loading}
         />
         <LoadingButton
           sx={{ mt: 3, mb: 2 }}
           fullWidth
           type="submit"
-          loading={false}
+          loading={loading}
           color="primary"
           variant="outlined"
         >
