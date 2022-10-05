@@ -2,6 +2,7 @@ import { Box } from '@mui/material';
 import { Container } from '@mui/system';
 import { React } from 'react';
 import { useEffect } from 'react';
+import { useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import notionLogo from '../../assets/images/notion-logo.png';
 import authUtils from '../../utils/authUtils';
