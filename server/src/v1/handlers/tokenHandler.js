@@ -1,4 +1,4 @@
-const JWT = require('jsonwebtoken');
+const jsonwebtoken = require('jsonwebtoken');
 const User = require('../models/user');
 
 // クライアントから渡されたJWTが正常か検証
@@ -7,13 +7,16 @@ const tokenDecode = (req) => {
   if (bearerHeader) {
     const bearer = bearerHeader.split(' ')[1];
     try {
-      const decodedToken = JWT.verify(bearer, process.env.TOKEN_SECRET_KEY);
-      return decodedToken;
+      const tokenDecoded = jsonwebtoken.verify(
+        bearer,
+        process.env.TOKEN_SECRET_KEY
+      );
+      return tokenDecoded;
     } catch {
       return false;
     }
   } else {
-    false;
+    return false;
   }
 };
 
@@ -29,6 +32,6 @@ exports.verifyToken = async (req, res, next) => {
     req.user = user;
     next();
   } else {
-    return res.status(401).json('権限がありません');
+    res.status(401).json('権限がありません');
   }
 };

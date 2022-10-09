@@ -13,16 +13,20 @@ axiosClient.interceptors.request.use(async (config) => {
     ...config,
     headers: {
       'Content-Type': 'application/json',
-      authorization: `Bearer${getToken()}`, // リクエストヘッダにJWTをつけてサーバーに渡す
+      authorization: `Bearer ${getToken()}`, // リクエストヘッダにJWTをつけてサーバーに渡す
     },
   };
 });
 
 axiosClient.interceptors.response.use(
   (response) => {
-    return response.data;
+    if (response && response.data) return response.data;
+    return response;
   },
   (err) => {
+    if (!err.response) {
+      return alert(err);
+    }
     throw err.response;
   }
 );

@@ -1,21 +1,25 @@
 import { Box } from '@mui/material';
 import { Container } from '@mui/system';
-import { React } from 'react';
+import React from 'react';
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import notionLogo from '../../assets/images/notion-logo.png';
 import authUtils from '../../utils/authUtils';
+import Loading from '../common/Loading';
+import notionLogo from '../../assets/images/notion-logo.png';
 
 const AuthLayout = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // JWTを持っているのか確認する
     const checkAuth = async () => {
-      // 認証チェック
+      //ページ切り替える度に認証チェック(トークン持ってるかどうか確認)
+      //ここで404notfoud
       const isAuth = await authUtils.isAuthenticated();
-      if (isAuth) {
+      if (!isAuth) {
+        setLoading(false);
+      } else {
         navigate('/');
       }
     };
@@ -23,14 +27,21 @@ const AuthLayout = () => {
   }, [navigate]);
 
   return (
-    <div>
+    // <div>
+    //   <Outlet />
+    // </div>
+    loading ? (
+      <>
+        <Loading fullHeight />
+      </>
+    ) : (
       <Container component="main" maxWidth="xs">
         <Box
           sx={{
-            marginTop: 6,
             display: 'flex',
             alignItems: 'center',
             flexDirection: 'column',
+            marginTop: 6,
           }}
         >
           <img
@@ -39,10 +50,10 @@ const AuthLayout = () => {
             style={{ width: 100, height: 100, marginBottom: 3 }}
           />
           Notionクローン開発
+          <Outlet />
         </Box>
-        <Outlet />
       </Container>
-    </div>
+    )
   );
 };
 

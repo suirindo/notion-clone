@@ -1,5 +1,5 @@
 const CryptoJS = require('crypto-js');
-const JWT = require('jsonwebtoken');
+const jsonwebtoken = require('jsonwebtoken');
 const User = require('../models/user');
 
 exports.register = async (req, res) => {
@@ -12,9 +12,13 @@ exports.register = async (req, res) => {
     // ユーザーの新規作成
     const user = await User.create(req.body);
     // JWTのクライアントへの発行
-    const token = JWT.sign({ id: user._id }, process.env.TOKEN_SECRET_KEY, {
-      expiresIn: '24h',
-    });
+    const token = jsonwebtoken.sign(
+      { id: user._id },
+      process.env.TOKEN_SECRET_KEY,
+      {
+        expiresIn: '24h',
+      }
+    );
     return res.status(200).json({ user, token });
   } catch (err) {
     return res.status(500).json(err);
@@ -27,7 +31,7 @@ exports.login = async (req, res) => {
 
   try {
     // DBからユーザーが存在するか探してくる
-    const user = await User.findOne({ username: username });
+    const user = await User.findOne({ username }).select('password username');
     if (!user) {
       return res.status(401).json({
         errors: [
@@ -53,9 +57,13 @@ exports.login = async (req, res) => {
       });
     }
     // JWTを発行
-    const token = JWT.sign({ id: user.id }, process.env.TOKEN_SECRET_KEY, {
-      expiresIn: '24h',
-    });
+    const token = jsonwebtoken.sign(
+      { id: user.id },
+      process.env.TOKEN_SECRET_KEY,
+      {
+        expiresIn: '24h',
+      }
+    );
     return res.status(201).json({ user, token });
   } catch (err) {
     return res.status(500).json(err);
