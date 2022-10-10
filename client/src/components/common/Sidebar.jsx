@@ -45,6 +45,16 @@ const Sidebar = () => {
     setActiveIndex(activeIndex);
   }, [navigate]);
 
+  const addMemo = async () => {
+    try {
+      const res = await memoApi.create();
+      const newMemos = [res, ...memos];
+      dispatch(setMemo(newMemos)); // super global で管理
+      navigate(`memo/${res._id}`);
+    } catch (err) {
+      alert(err);
+    }
+  };
   return (
     <Drawer
       container={window.document.body}
@@ -90,6 +100,23 @@ const Sidebar = () => {
               お気に入り
             </Typography>
             <IconButton></IconButton>
+          </Box>
+        </ListItemButton>
+        <ListItemButton>
+          <Box
+            sx={{
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <Typography variant="body2" fontWeight="700">
+              プライベート
+            </Typography>
+            <IconButton onClick={() => addMemo()}>
+              <AddBoxOutlinedIcon fontSize="small" />
+            </IconButton>
           </Box>
         </ListItemButton>
         {memos.map((item, index) => (
