@@ -8,19 +8,42 @@ import {
 import { Box } from '@mui/system';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import assets from '../../assets/index';
-import { Link, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import memoApi from '../../api/memoApi';
+import { setMemo } from '../../redux/features/memoSlice';
 
 const Sidebar = () => {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.value);
+  const memos = useSelector((state) => state.memo.value);
+  const { memoId } = useParams();
 
   const logout = () => {
     localStorage.removeItem('token');
     navigate('/login');
   };
+
+  useEffect(() => {
+    const getMemos = async () => {
+      try {
+        const res = await memoApi.getAll();
+        dispatch(setMemo(res));
+      } catch (err) {
+        alert(err);
+      }
+    };
+    getMemos();
+  }, [dispatch]);
+
+  useEffect(() => {
+    const activeIndex = memos.findIndex((e) => e._id === memoId);
+    setActiveIndex(activeIndex);
+  }, [navigate]);
 
   return (
     <Drawer
@@ -69,27 +92,19 @@ const Sidebar = () => {
             <IconButton></IconButton>
           </Box>
         </ListItemButton>
-        <Box sx={{ paddingTop: '10px' }}></Box>
-        <ListItemButton>
-          <Box
-            sx={{
-              width: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
+        {memos.map((item, index) => (
+          <ListItemButton
+            sx={{ pl: '20px' }}
+            component={Link}
+            to={`/memo/${item._id}`}
+            key={item._id}
+            selected={index === activeIndex}
           >
-            <Typography variant="body2" fontWeight="700">
-              プライベート
+            <Typography>
+              {item.icon} {item.title}
             </Typography>
-            <IconButton>
-              <AddBoxOutlinedIcon fontSize="small" />
-            </IconButton>
-          </Box>
-        </ListItemButton>
-        <ListItemButton sx={{ pl: '20px' }} component={Link} to="/memo/gsfsfs3">
-          <Typography>📝無題</Typography>
-        </ListItemButton>
+          </ListItemButton>
+        ))}
       </List>
     </Drawer>
   );
