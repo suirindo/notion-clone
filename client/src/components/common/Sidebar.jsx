@@ -21,7 +21,7 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.value);
   const memos = useSelector((state) => state.memo.value);
-  const { memoId } = useParams();
+  const memoId = useParams();
 
   const logout = () => {
     localStorage.removeItem('token');
